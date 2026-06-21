@@ -1,0 +1,6 @@
+{
+  "name": "Portfolio Management System",
+  "description": "A premium recruiter-focused portfolio management system with a rich admin dashboard to manage profile details, experience, education, skills, projects, certificates, blogs, achievements, and testimonials.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
