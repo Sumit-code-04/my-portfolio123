@@ -207,6 +207,23 @@ export const AdminDashboard: React.FC = () => {
     }
   };
 
+  const handleResumeUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      if (file.type !== 'application/pdf') {
+        toast.error('Only PDF files are supported for resume upload.');
+        return;
+      }
+      try {
+        const base64 = await readAsBase64(file);
+        setProfileForm(prev => ({ ...prev, resumePdf: base64 }));
+        toast.success('Resume PDF successfully loaded as localized Base64.');
+      } catch {
+        toast.error('Failed to read PDF file parameters.');
+      }
+    }
+  };
+
   const renderProfile = () => {
     return (
       <form onSubmit={saveProfileAndAbout} className="space-y-6">
@@ -324,6 +341,37 @@ export const AdminDashboard: React.FC = () => {
                 className="w-full px-3 py-1.5 text-xs rounded-lg bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-white resize-none"
                 required
               />
+            </div>
+
+            <div className="border-t border-slate-100 dark:border-slate-800 pt-4 space-y-3">
+              <h4 className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Resume PDF Configuration</h4>
+              
+              <div>
+                <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Upload New Resume PDF</label>
+                <input
+                  type="file"
+                  accept="application/pdf"
+                  onChange={handleResumeUpload}
+                  className="block w-full text-[11px] text-slate-500 file:mr-3 file:py-1 file:px-2.5 file:rounded-md file:border-0 file:text-[10px] file:font-semibold file:bg-amber-500/10 file:text-amber-500 hover:file:bg-amber-500/20 file:cursor-pointer"
+                />
+                <p className="text-[9px] text-slate-400 mt-1">This will bundle your entire actual PDF inside your local profile.</p>
+              </div>
+
+              <div>
+                <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Or Paste Resume Link (e.g. Google Drive / GitHub / Dropbox)</label>
+                <input
+                  type="text"
+                  value={profileForm.resumePdf && profileForm.resumePdf.startsWith('data:') ? 'Embedded PDF File' : profileForm.resumePdf}
+                  placeholder="https://drive.google.com/..."
+                  onChange={e => {
+                    const val = e.target.value;
+                    if (val !== 'Embedded PDF File') {
+                      setProfileForm({ ...profileForm, resumePdf: val });
+                    }
+                  }}
+                  className="w-full px-3 py-1.5 text-xs rounded-lg bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-white"
+                />
+              </div>
             </div>
           </div>
 

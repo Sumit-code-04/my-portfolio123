@@ -93,17 +93,202 @@ export const Home: React.FC = () => {
   }, [projects, skills, certificates, experience]);
 
   const triggerResumeDownload = () => {
-    // If the base64 is standard default or placeholder, offer a structured download option
     try {
+      const resumeSource = profile.resumePdf || '';
+      const filename = `${profile.name.replace(/\s+/g, '_')}_Resume.pdf`;
+
+      // 1. If it's a web link (e.g., Google Drive, GitHub/Dropbox URL)
+      if (resumeSource.startsWith('http://') || resumeSource.startsWith('https://')) {
+        window.open(resumeSource, '_blank');
+        toast.success('Opening resume PDF link in a new tab!');
+        return;
+      }
+
+      // 2. If it is the default truncated base64 placeholder, empty, or placeholder string
+      const isPlaceholder = !resumeSource || 
+                          resumeSource.includes('JVBERi0xLjQKJSDi48cl...') || 
+                          resumeSource.length < 150;
+
+      if (isPlaceholder) {
+        // Build a robust, beautifully formatted valid PDF dynamically reflecting active portfolio values
+        const esc = (s: string) => (s || '').replace(/\\/g, '\\\\').replace(/\(/g, '\\(').replace(/\)/g, '\\)');
+        
+        // Wrap paragraph lines
+        const bioText = profile.shortBio || '';
+        const bioWords = bioText.split(/\s+/);
+        const bioLines: string[] = [];
+        let currentLine = '';
+        for (const word of bioWords) {
+          if ((currentLine + ' ' + word).length > 70) {
+            bioLines.push(currentLine.trim());
+            currentLine = word;
+          } else {
+            currentLine += ' ' + word;
+          }
+        }
+        if (currentLine) bioLines.push(currentLine.trim());
+
+        const pdfStreamParts = [
+          'BT',
+          '/F1 22 Tf',
+          '70 760 Td',
+          `(${esc(profile.name)}) Tj`,
+          '/F1 12 Tf',
+          '0 -30 Td',
+          `(${esc(profile.title)}) Tj`,
+          '0 -25 Td',
+          `(${esc(profile.email)}  |  ${esc(profile.phone)}) Tj`,
+          '0 -15 Td',
+          `(${esc(profile.address)}) Tj`,
+          '0 -35 Td',
+          '/F1 14 Tf',
+          '(Professional Profile Summary) Tj',
+          '/F1 10 Tf',
+          '0 -22 Td'
+        ];
+
+        bioLines.forEach((line, i) => {
+          if (i > 0) pdfStreamParts.push('0 -15 Td');
+          pdfStreamParts.push(`(${esc(line)}) Tj`);
+        });
+
+        pdfStreamParts.push(
+          '0 -40 Td',
+          '/F1 14 Tf',
+          '(Core Strategic & Engineering Focus) Tj',
+          '/F1 10 Tf',
+          '0 -22 Td',
+          '(- Business Strategy & Management: Specialized MBA methodologies.) Tj',
+          '0 -15 Td',
+          '(- Infrastructure Rigor: Civil Engineering industrial foundation.) Tj',
+          '0 -15 Td',
+          '(- Creative Leadership: Professional collaboration & operational excellence.) Tj',
+          '0 -40 Td',
+          '/F1 11 Tf',
+          '(Note: Please visit the live interactive portfolio link at this domain) Tj',
+          '0 -15 Td',
+          '(to view full digital case studies, timeline milestones, and certificates.) Tj',
+          'ET'
+        );
+
+        const streamText = pdfStreamParts.join('\n');
+        const streamLength = streamText.length;
+
+        const pdfContent = [
+          '%PDF-1.4',
+          '1 0 obj',
+          '<<',
+          '  /Type /Catalog',
+          '  /Pages 2 0 R',
+          '>>',
+          'endobj',
+          '2 0 obj',
+          '<<',
+          '  /Type /Pages',
+          '  /Kids [3 0 R]',
+          '  /Count 1',
+          '>>',
+          'endobj',
+          '3 0 obj',
+          '<<',
+          '  /Type /Page',
+          '  /Parent 2 0 R',
+          '  /Resources <<',
+          '    /Font <<',
+          '      /F1 4 0 R',
+          '    >>',
+          '  >>',
+          '  /MediaBox [0 0 595 842]',
+          '  /Contents 5 0 R',
+          '>>',
+          'endobj',
+          '4 0 obj',
+          '<<',
+          '  /Type /Font',
+          '  /Subtype /Type1',
+          '  /BaseFont /Helvetica',
+          '>>',
+          'endobj',
+          '5 0 obj',
+          `<< /Length ${streamLength} >>`,
+          'stream',
+          streamText,
+          'endstream',
+          'endobj',
+          'xref',
+          '0 6',
+          '0000000000 65535 f ',
+          '0000000010 00000 n ',
+          '0000000062 00000 n ',
+          '0000000117 00000 n ',
+          '0000000244 00000 n ',
+          '0000000297 00000 n ',
+          'trailer',
+          '<<',
+          '  /Size 6',
+          '  /Root 1 0 R',
+          '>>',
+          'startxref',
+          '480',
+          '%%EOF'
+        ].join('\n');
+
+        const len = pdfContent.length;
+        const bytes = new Uint8Array(len);
+        for (let i = 0; i < len; i++) {
+          bytes[i] = pdfContent.charCodeAt(i) & 0xff;
+        }
+        
+        const blob = new Blob([bytes], { type: 'application/pdf' });
+        const objUrl = URL.createObjectURL(blob);
+
+        const link = document.createElement('a');
+        link.href = objUrl;
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        setTimeout(() => URL.revokeObjectURL(objUrl), 100);
+        toast.success('Generated and downloaded updated dynamic PDF resume!');
+        return;
+      }
+
+      // 3. If it's a real base64 file uploaded by the user, convert and save beautifully
+      if (resumeSource.startsWith('data:')) {
+        const parts = resumeSource.split(';base64,');
+        const contentType = parts[0].split(':')[1] || 'application/pdf';
+        const raw = window.atob(parts[1]);
+        const rawLength = raw.length;
+        const uInt8Array = new Uint8Array(rawLength);
+        for (let i = 0; i < rawLength; ++i) {
+          uInt8Array[i] = raw.charCodeAt(i);
+        }
+        const blob = new Blob([uInt8Array], { type: contentType });
+        const objUrl = URL.createObjectURL(blob);
+
+        const link = document.createElement('a');
+        link.href = objUrl;
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        setTimeout(() => URL.revokeObjectURL(objUrl), 100);
+        toast.success('Successfully downloaded your custom PDF resume!');
+        return;
+      }
+
+      // Fallback anchor behavior
       const link = document.createElement('a');
-      link.href = profile.resumePdf || 'data:text/plain;base64,U2FtcGxlIFJlc3VtZQ==';
-      link.download = `${profile.name.replace(/\s+/g, '_')}_Resume.pdf`;
+      link.href = resumeSource;
+      link.download = filename;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
       toast.success('Resume downloaded successfully!');
     } catch {
-      toast.error('Resume source is unavailable as binary database is clearing.');
+      toast.error('Unable to finalize resume download. Try checking your credentials file.');
     }
   };
 

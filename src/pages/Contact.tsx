@@ -183,7 +183,7 @@ export const Contact: React.FC = () => {
                       type="text"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
-                      placeholder="Jane Doe"
+                      placeholder="Samit Rathod"
                       className="w-full px-3.5 py-1.8 text-xs rounded-xl bg-slate-100/50 dark:bg-slate-800 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-white focus:outline-none focus:border-amber-500 transition-colors"
                       required
                     />
@@ -198,7 +198,7 @@ export const Contact: React.FC = () => {
                       type="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      placeholder="recruiter@company.com"
+                      placeholder="Samitrathod123@gmail.com"
                       className="w-full px-3.5 py-1.8 text-xs rounded-xl bg-slate-100/50 dark:bg-slate-800 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-white focus:outline-none focus:border-amber-500 transition-colors"
                       required
                     />
@@ -229,7 +229,7 @@ export const Contact: React.FC = () => {
                     rows={4}
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
-                    placeholder="Hi Arjun, we reviewed your civil graduation metrics alongside MBA objectives and would love to process an informational interview request..."
+                    placeholder="Hi Radhika, we reviewed your civil graduation metrics alongside MBA objectives and would love to process an informational interview request..."
                     className="w-full px-3.5 py-2 text-xs rounded-xl bg-slate-100/50 dark:bg-slate-800 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-white focus:outline-none focus:border-amber-500 transition-colors resize-none"
                     required
                   />

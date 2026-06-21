@@ -13,7 +13,7 @@ export const About: React.FC = () => {
           About & Academic Foundation
         </h1>
         <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 max-w-lg mx-auto">
-          Delve into the strategic goals, core strengths, and structural civil & executive business schooling records that define Arjun's career alignment.
+          Delve into the strategic goals, core strengths, and structural civil & executive business schooling records that define Radhika's career alignment.
         </p>
       </div>
 
