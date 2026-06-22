@@ -370,7 +370,7 @@ export const Home: React.FC = () => {
               {/* Image Container with Custom Slanted Accent */}
               <div className="relative w-72 h-72 sm:w-80 sm:h-80 overflow-hidden rounded-2xl border-2 border-white dark:border-slate-800 shadow-xl bg-slate-100 dark:bg-slate-900 group">
                 <img
-                  src={profile.profileImage || "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=400&q=80"}
+                  src={profile.profileImage || "/sister pic132.jpeg"}
                   alt={profile.name}
                   referrerPolicy="no-referrer"
                   className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"

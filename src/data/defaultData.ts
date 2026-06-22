@@ -16,11 +16,11 @@ export const defaultProfile: Profile = {
   name: "Radhika Rathod",
   title: "MBA Professional & B.Tech Civil Graduate",
   shortBio: "A dynamic hybrid professional bridging Technical Engineering rigor and Strategic Management capabilities. HR enthusiast, agile planner, and natural problem-solver.",
-  profileImage: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=400&q=80",
-  email: "withkaminapan@gmail.com",
-  phone: "+1 (555) 019-2834",
-  address: "San Francisco, California, USA",
-  linkedIn: "https://linkedin.com/in/arjun-sharma-mba",
+  profileImage: "sister pic132.jpeg",
+  email: "rathodradhika446@gmail.com",
+  phone: "+91 8459739450",
+  address: "Chh.sambhaji nagar, Maharashtra, India",
+  linkedIn: "https://www.linkedin.com/in/radhika-rathod-5b2442230/",
   gitHub: "https://github.com/arjunsharma-eng",
   resumePdf: "data:application/pdf;base64,JVBERi0xLjQKJSDi48cl..." // Dummy base64 placeholder
 };
